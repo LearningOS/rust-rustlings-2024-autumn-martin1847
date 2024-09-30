@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd+Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd+Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -56,11 +55,11 @@ impl<T> LinkedList<T> {
         self.length += 1;
     }
 
-    pub fn get(&mut self, index: i32) -> Option<&T> {
+    pub fn get(&self, index: i32) -> Option<&T> {
         self.get_ith_node(self.start, index)
     }
 
-    fn get_ith_node(&mut self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
+    fn get_ith_node(&self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
         match node {
             None => None,
             Some(next_ptr) => match index {
@@ -69,14 +68,97 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+    fn copy_tail(res:&mut LinkedList<T>,f:&LinkedList<T>,mut fi:i32){
+        while let Some(t) = f.get(fi) {
+            res.add(t.clone());
+            fi+=1;
+        }
+    }
+
+    pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
+		let mut res = Self::new();
+        let mut ia =0;
+        let mut ib =0;
+        let mut a = list_a.get(ia);
+        let mut b = list_b.get(ib);
+        // list_a.it
+
+        loop {
+            match (a,b) {
+                (Some(av),Some(bv))=>{
+                    if av <= bv {
+                        res.add(av.clone());
+                        ia+=1;
+                        a = list_a.get(ia);
+                    }else{
+                        res.add(bv.clone());
+                        ib+=1;
+                        b = list_b.get(ib);
+                    }
+                },
+                (Some(av),None)=>{
+                    res.add(av.clone());
+                    ia+=1;
+                    a = list_a.get(ia);
+                },
+                (None,Some(bv))=>{
+                    res.add(bv.clone());
+                    ib+=1;
+                    b = list_b.get(ib);
+                },
+                (None,None)=>{
+                    break;
+                }
+            }
+        }
+        res
+
+	}
+
+	pub fn merge_by_if(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	{
+		//TODO
+		let mut res = Self {
             length: 0,
             start: None,
             end: None,
+        };
+        let mut ia =0;
+        let mut ib =0;
+        let mut a = list_a.get(ia);
+        let mut b = list_b.get(ib);
+
+        loop {
+            if a.is_none() || b.is_none() {
+                if let Some(t) = a {
+                    res.add(t.clone());
+                    ia+=1;
+                    Self::copy_tail(&mut res, &list_a, ia);
+                    break;
+                }
+                if let Some(t) = b {
+                    res.add(t.clone());
+                    ib+=1;
+                    Self::copy_tail(&mut res, &list_b, ib);
+                    break;
+                }
+            }
+            let av = a.unwrap();
+            let bv = b.unwrap();
+            if av <= bv {
+                res.add(av.clone());
+                ia+=1;
+                a = list_a.get(ia);
+            }else{
+                res.add(bv.clone());
+                ib+=1;
+                b = list_b.get(ib);
+            }
         }
+        res
+
 	}
 }
 
