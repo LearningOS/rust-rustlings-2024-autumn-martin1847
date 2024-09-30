@@ -72,9 +72,50 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn reverse(&mut self){
+
+    pub fn reverse(&mut self){
 		// TODO
+        if self.length < 2 {
+            return; 
+        }
+        
+        let mut curr: Option<NonNull<Node<T>>> = self.start;
+        let mut prev: Option<NonNull<Node<T>>> = None ;
+
+        while let Some(mut t) = curr {
+            
+            let mut curr_node = unsafe {
+                t.as_mut()
+            }; 
+            let next = curr_node.next;
+            curr_node.next = prev;
+            curr_node.prev = next;
+            prev = curr;
+            curr = next;
+        }
+        std::mem::swap(&mut self.start, &mut self.end);
 	}
+    
+	// pub fn reverse2(&mut self){
+	// 	// TODO
+    //     if self.length < 2 {
+    //         return; 
+    //     }
+    //     let mut curr: Option<NonNull<Node<T>>> = self.start;
+    //     let mut prev: Option<NonNull<Node<T>>> = None ;
+    //     while let Some(mut c_ptr) = curr {
+    //         unsafe {
+    //             let next = (*c_ptr.as_ptr()).next;
+    //             (*c_ptr.as_ptr()).next = prev;
+    //             (*c_ptr.as_ptr()).prev = next;
+    //             prev = curr;
+    //             curr = next;
+    //         }
+    //         // break;
+    //     }
+    //     std::mem::swap(&mut self.start, &mut self.end);
+	// }
+
 }
 
 impl<T> Display for LinkedList<T>
