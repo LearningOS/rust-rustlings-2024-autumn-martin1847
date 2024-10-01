@@ -3,9 +3,34 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
+fn pivot_partition<T: std::cmp::PartialOrd>(arr: &mut [T]) -> usize {
+    let pivot_index = arr.len() -1 ;//last one
+    // arr[0];
+    arr.swap(arr.len()/2, pivot_index);
+    //last position of elements less than the pivot.
+    let mut lt_index = 0;
+    // let pivot = arr[arr.len() - 1];
+    for i in 0..pivot_index {
+        if arr[i] < arr[pivot_index] {
+            arr.swap(i, lt_index);
+            lt_index += 1;
+        }
+    }
+    arr.swap(lt_index, pivot_index);
+    lt_index
+}
+
+fn sort<T: std::cmp::PartialOrd>(array: &mut [T]){
+    if array.len() < 2{
+        return;
+    }
+    let pivot_index = pivot_partition(array);
+    sort(&mut array[..pivot_index]);
+    sort(&mut array[pivot_index + 1..]);
+    // let (left, right) = array.split_at_mut(pivot_index);
+    // sort(left);
+    // sort(&mut right[1..]);
 	//TODO
 }
 #[cfg(test)]
