@@ -74,16 +74,16 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        self.root = Self::insert_return(self.root.take(), value)
+        self.root = Self::insert_replace(self.root.take(), value)
     }
 
-    fn insert_return(root:Option<Box<TreeNode<T>>>,value: T)-> Option<Box<TreeNode<T>>> {
+    fn insert_replace(root:Option<Box<TreeNode<T>>>,value: T)-> Option<Box<TreeNode<T>>> {
         match root {
             Some(mut node)=>{
                 if value < node.value {
-                    node.left = Self::insert_return(node.left.take(), value);
+                    node.left = Self::insert_replace(node.left.take(), value);
                 }else if value > node.value {
-                    node.right = Self::insert_return(node.right.take(), value);
+                    node.right = Self::insert_replace(node.right.take(), value);
                 }
                 // == , do nothing
                 Some(node)
