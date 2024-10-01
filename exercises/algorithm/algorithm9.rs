@@ -1,11 +1,12 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
+// use std::fmt::Debug;
+use std::process::id;
 
 pub struct Heap<T>
 where
@@ -15,6 +16,8 @@ where
     items: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
+
+const HEAD_INDEX:usize = 1;
 
 impl<T> Heap<T>
 where
@@ -38,6 +41,22 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        self.shift_up(self.count);
+    }
+
+    fn shift_up(&mut self, idx: usize) {
+        if idx == HEAD_INDEX {
+            //堆顶
+            return;
+        }
+        let pare_idx = self.parent_idx(idx);
+        if (self.comparator)(&self.items[idx], &self.items[pare_idx]) {
+            self.items.swap(pare_idx, idx);
+            //递归冒泡
+            self.shift_up(pare_idx);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +77,27 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+
+        let left_child_idx = self.left_child_idx(idx);
+        let right_child_idx = left_child_idx+1;
+
+        if right_child_idx <= self.count
+            && (self.comparator)(&self.items[right_child_idx], &self.items[left_child_idx])
+        {
+            right_child_idx
+        } else {
+            left_child_idx
+        }
+    }
+
+    fn shift_down(&mut self, idx: usize) {
+        if self.children_present(idx) {
+            let smallest_child_idx = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
+                self.items.swap(smallest_child_idx, idx);
+            }
+            self.shift_down(smallest_child_idx);
+        }
     }
 }
 
@@ -84,8 +123,20 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+
+        // head/tail swap
+        self.items.swap(HEAD_INDEX, self.count);
+
+        let head = self.items.pop();
+        self.count -= 1;
+
+        if self.count > 0 {
+            self.shift_down(HEAD_INDEX);
+        }
+        head
     }
 }
 
