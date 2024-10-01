@@ -2,7 +2,6 @@
     heap
     This question requires you to implement a binary heap function
 */
-
 use std::cmp::Ord;
 use std::default::Default;
 // use std::fmt::Debug;
@@ -95,8 +94,8 @@ where
             let smallest_child_idx = self.smallest_child_idx(idx);
             if (self.comparator)(&self.items[smallest_child_idx], &self.items[idx]) {
                 self.items.swap(smallest_child_idx, idx);
+                self.shift_down(smallest_child_idx);
             }
-            self.shift_down(smallest_child_idx);
         }
     }
 }
