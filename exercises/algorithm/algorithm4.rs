@@ -63,70 +63,54 @@ where
             }
         }
     }
-
-    // Insert a value into the BST
-    fn insert(&mut self, value: T) {
+      // Insert a value into the BST
+    fn insert_2(&mut self, value: T) {
+        // let r = self.root.take();
         match self.root {
             Some(ref mut r) => Self::insert_from(r, value),
             None => self.root = Some(Box::new(TreeNode::new(value)))
         }
-        // let mut start = &self.root;
-        // while let Some(ref mut curr) = start {
-        //     if value < curr.value {
-        //         match curr.left {
-        //             Some(ref l)=> {
-        //                 if value < l.value {
-        //                     start = &curr.left;
-        //                     continue;
-        //                 }
-        //                 let mut me = Box::new(TreeNode::new(value));
-        //                 me.left = curr.left;
-        //                 curr.left = Some(me);
-        //                 break;
-        //             }
-        //             None => {
-        //                 curr.left = Some(Box::new(TreeNode::new(value)));
-        //                 break;
-        //             }
-        //         }
-        //         break;
-        //     }
-
-        //     match curr.right {
-        //         Some(ref r)=> {
-        //             if value > r.value {
-        //                 start = &curr.left;
-        //                 continue;
-        //             }
-        //             let mut me = Box::new(TreeNode::new(value));
-        //             me.left = curr.left;
-        //             curr.left = Some(me);
-        //             break;
-        //         }
-        //         None => {
-        //             curr.left = Some(Box::new(TreeNode::new(value)));
-        //             break;
-        //         }
-        //     }
-
-        // }
-        //TODO
     }
+
+    // Insert a value into the BST
+    fn insert(&mut self, value: T) {
+        self.root = Self::insert_return(self.root.take(), value)
+    }
+
+    fn insert_return(root:Option<Box<TreeNode<T>>>,value: T)-> Option<Box<TreeNode<T>>> {
+        match root {
+            Some(mut node)=>{
+                if value < node.value {
+                    node.left = Self::insert_return(node.left.take(), value);
+                }else if value > node.value {
+                    node.right = Self::insert_return(node.right.take(), value);
+                }
+                // == , do nothing
+                Some(node)
+            },
+            None => Some(Box::new(TreeNode::new(value)))
+        }
+    }
+
+  
 
 
     fn search_from(root:&Box<TreeNode<T>>,value: T) -> bool{
         if value == root.value {
             true
         }else if value < root.value {
-            match root.left {
-                Some(ref v) => Self::search_from(v, value),
-                None => false
-            }
+            root.left.as_ref().map_or(false, |v|Self::search_from(v, value))
+            // match root.left {
+            //     Some(ref v) => Self::search_from(v, value),
+            //     None => false
+            // }
         }else {
-            match root.right {
-                Some(ref v) => Self::search_from(v, value),
-                None => false
-            }
+            root.right.as_ref().map_or(false, |v|Self::search_from(v, value))
+            
+            // match root.right {
+            //     Some(ref v) => Self::search_from(v, value),
+            //     None => false
+            // }
         }
         
     }
@@ -134,10 +118,12 @@ where
     fn search(&self, value: T) -> bool {
         //TODO
         // true
-        match self.root {
-            Some(ref r) => Self::search_from(r, value),
-            None => false
-        }
+        self.root.as_ref().map_or(false, |v|Self::search_from(v, value))
+            
+        // match self.root {
+        //     Some(ref r) => Self::search_from(r, value),
+        //     None => false
+        // }
     }
 }
 
