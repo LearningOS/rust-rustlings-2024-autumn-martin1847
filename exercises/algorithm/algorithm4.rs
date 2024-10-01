@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -48,15 +47,97 @@ where
         BinarySearchTree { root: None }
     }
 
+    fn insert_from(root:&mut Box<TreeNode<T>>,value: T){
+        if value == root.value {
+            return;
+        }else if value < root.value {
+            // Self::insert_left(v,value);
+            match root.left {
+                Some(ref mut v) =>  Self::insert_from(v,value),
+                None => root.left = Some(Box::new(TreeNode::new(value)))
+            }
+        }else{
+            match root.right {
+                Some(ref mut v) =>  Self::insert_from(v,value),
+                None => root.right = Some(Box::new(TreeNode::new(value)))
+            }
+        }
+    }
+
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
+        match self.root {
+            Some(ref mut r) => Self::insert_from(r, value),
+            None => self.root = Some(Box::new(TreeNode::new(value)))
+        }
+        // let mut start = &self.root;
+        // while let Some(ref mut curr) = start {
+        //     if value < curr.value {
+        //         match curr.left {
+        //             Some(ref l)=> {
+        //                 if value < l.value {
+        //                     start = &curr.left;
+        //                     continue;
+        //                 }
+        //                 let mut me = Box::new(TreeNode::new(value));
+        //                 me.left = curr.left;
+        //                 curr.left = Some(me);
+        //                 break;
+        //             }
+        //             None => {
+        //                 curr.left = Some(Box::new(TreeNode::new(value)));
+        //                 break;
+        //             }
+        //         }
+        //         break;
+        //     }
+
+        //     match curr.right {
+        //         Some(ref r)=> {
+        //             if value > r.value {
+        //                 start = &curr.left;
+        //                 continue;
+        //             }
+        //             let mut me = Box::new(TreeNode::new(value));
+        //             me.left = curr.left;
+        //             curr.left = Some(me);
+        //             break;
+        //         }
+        //         None => {
+        //             curr.left = Some(Box::new(TreeNode::new(value)));
+        //             break;
+        //         }
+        //     }
+
+        // }
         //TODO
     }
 
+
+    fn search_from(root:&Box<TreeNode<T>>,value: T) -> bool{
+        if value == root.value {
+            true
+        }else if value < root.value {
+            match root.left {
+                Some(ref v) => Self::search_from(v, value),
+                None => false
+            }
+        }else {
+            match root.right {
+                Some(ref v) => Self::search_from(v, value),
+                None => false
+            }
+        }
+        
+    }
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        // true
+        match self.root {
+            Some(ref r) => Self::search_from(r, value),
+            None => false
+        }
     }
 }
 
