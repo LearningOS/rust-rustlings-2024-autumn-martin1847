@@ -1,10 +1,14 @@
 
 ## 
 
-安装`rustling`
-* 
+1. 安装`rustling`
 
-直接运行使用
+```bash
+cargo install --force --path .
+
+```
+
+2. 直接运行使用
 
 ```bash
 # 激活服务器，代码提示
