@@ -20,5 +20,5 @@ cargo run -- watch
 3. 单独运行
 
 ```bash
-cargo run -- run iterators3
+cargo run -- run algorithm9
 ```
